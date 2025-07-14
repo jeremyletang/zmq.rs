@@ -4,7 +4,7 @@ use crate::*;
 use asynchronous_codec::FramedRead;
 use bytes::Bytes;
 use futures::{SinkExt, StreamExt};
-use rand::Rng;
+// use rand::Rng;
 
 use std::convert::{TryFrom, TryInto};
 use std::ops::Deref;
@@ -202,19 +202,20 @@ pub(crate) async fn peer_connected(
 }
 
 pub(crate) async fn connect_forever(endpoint: Endpoint) -> ZmqResult<(FramedIo, Endpoint)> {
-    let mut try_num: u64 = 0;
+    // let mut try_num: u64 = 0;
     loop {
         match transport::connect(&endpoint).await {
             Ok(res) => return Ok(res),
             Err(ZmqError::Network(e)) if e.kind() == std::io::ErrorKind::ConnectionRefused => {
-                if try_num < 5 {
-                    try_num += 1;
-                }
-                let delay = {
-                    let mut rng = rand::thread_rng();
-                    std::f64::consts::E.powf(try_num as f64 / 3.0) + rng.gen_range(0.0f64..0.1f64)
-                };
-                async_rt::task::sleep(std::time::Duration::from_secs_f64(delay)).await;
+                // if try_num < 5 {
+                //     try_num += 1;
+                // }
+                // let delay = {
+                //     let mut rng = rand::thread_rng();
+                //     std::f64::consts::E.powf(try_num as f64 / 3.0) + rng.gen_range(0.0f64..0.1f64)
+                // };
+                // async_rt::task::sleep(std::time::Duration::from_secs_f64(delay)).await;
+                async_rt::task::sleep(std::time::Duration::from_millis(20)).await;
                 continue;
             }
             Err(e) => return Err(e),
